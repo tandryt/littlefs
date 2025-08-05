@@ -7,7 +7,7 @@
  */
 #include "lfs.h"
 #include "lfs_util.h"
-
+#include "drivers/console_logger/clog.h"
 
 // some constants used throughout the code
 #define LFS_BLOCK_NULL ((lfs_block_t)-1)
@@ -5965,10 +5965,11 @@ cleanup:
 // Public API
 #ifndef LFS_READONLY
 int lfs_format(lfs_t *lfs, const struct lfs_config *cfg) {
-    int err = LFS_LOCK(cfg);
-    if (err) {
-        return err;
-    }
+    int err;// = LFS_LOCK(cfg);
+    // if (err) 
+    // {
+    //     return err;
+    // }
     LFS_TRACE("lfs_format(%p, %p {.context=%p, "
                 ".read=%p, .prog=%p, .erase=%p, .sync=%p, "
                 ".read_size=%"PRIu32", .prog_size=%"PRIu32", "
@@ -5989,16 +5990,20 @@ int lfs_format(lfs_t *lfs, const struct lfs_config *cfg) {
     err = lfs_format_(lfs, cfg);
 
     LFS_TRACE("lfs_format -> %d", err);
-    LFS_UNLOCK(cfg);
+    //LFS_UNLOCK(cfg);
     return err;
 }
 #endif
 
 int lfs_mount(lfs_t *lfs, const struct lfs_config *cfg) {
-    int err = LFS_LOCK(cfg);
-    if (err) {
-        return err;
-    }
+    CLOG_PRINT_INFO("---------------Flash here 3");
+    int err;// = LFS_LOCK(cfg);
+    // CLOG_PRINT_INFO("---------------Flash here 3.1");
+    // if (err) 
+    // {
+    //     CLOG_PRINT_INFO("---------------Flash here 3.2");
+    //     return err;
+    // }
     LFS_TRACE("lfs_mount(%p, %p {.context=%p, "
                 ".read=%p, .prog=%p, .erase=%p, .sync=%p, "
                 ".read_size=%"PRIu32", .prog_size=%"PRIu32", "
@@ -6015,11 +6020,11 @@ int lfs_mount(lfs_t *lfs, const struct lfs_config *cfg) {
             cfg->block_cycles, cfg->cache_size, cfg->lookahead_size,
             cfg->read_buffer, cfg->prog_buffer, cfg->lookahead_buffer,
             cfg->name_max, cfg->file_max, cfg->attr_max);
-
+ CLOG_PRINT_INFO("---------------Flash here 4");
     err = lfs_mount_(lfs, cfg);
-
+ CLOG_PRINT_INFO("---------------Flash here 5");
     LFS_TRACE("lfs_mount -> %d", err);
-    LFS_UNLOCK(cfg);
+    //LFS_UNLOCK(cfg);
     return err;
 }
 
