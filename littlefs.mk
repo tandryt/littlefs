@@ -14,7 +14,7 @@ INC_PATHS += -I$(LITTLEFS_SRC_DIR)
 CFLAGS += -DLFS_CONFIG=lfs_config.h
 
 # Add project source directory to include path for lfs_config.h
-INC_PATHS += -I$(PROJECT_SOURCE_FOLDER)
+INC_PATHS += -I$(PROJECT_SOURCE_FOLDER)/lfs
 
 # Add compiler flags to suppress LittleFS warnings
 CFLAGS += -Wno-return-type -Wno-missing-field-initializers

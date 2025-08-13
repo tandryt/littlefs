@@ -2095,7 +2095,7 @@ relocate:
         if (!tired) {
             LFS_DEBUG("Bad block at 0x%"PRIx32, dir->pair[1]);
         }
-
+        
         // can't relocate superblock, filesystem is now frozen
         if (lfs_pair_cmp(dir->pair, (const lfs_block_t[2]){0, 1}) == 0) {
             LFS_WARN("Superblock 0x%"PRIx32" has become unwritable",
@@ -3650,7 +3650,8 @@ relocate:
 }
 
 static lfs_ssize_t lfs_file_write_(lfs_t *lfs, lfs_file_t *file,
-        const void *buffer, lfs_size_t size) {
+        const void *buffer, lfs_size_t size) 
+{
     LFS_ASSERT((file->flags & LFS_O_WRONLY) == LFS_O_WRONLY);
 
     if (file->flags & LFS_F_READING) {
@@ -4384,7 +4385,8 @@ static int lfs_deinit(lfs_t *lfs) {
 
 
 #ifndef LFS_READONLY
-static int lfs_format_(lfs_t *lfs, const struct lfs_config *cfg) {
+static int lfs_format_(lfs_t *lfs, const struct lfs_config *cfg) 
+{
     int err = 0;
     {
         err = lfs_init(lfs, cfg);
@@ -5965,11 +5967,11 @@ cleanup:
 // Public API
 #ifndef LFS_READONLY
 int lfs_format(lfs_t *lfs, const struct lfs_config *cfg) {
-    int err;// = LFS_LOCK(cfg);
-    // if (err) 
-    // {
-    //     return err;
-    // }
+    int err = LFS_LOCK(cfg);
+    if (err) 
+    {
+        return err;
+    }
     LFS_TRACE("lfs_format(%p, %p {.context=%p, "
                 ".read=%p, .prog=%p, .erase=%p, .sync=%p, "
                 ".read_size=%"PRIu32", .prog_size=%"PRIu32", "
@@ -5990,20 +5992,17 @@ int lfs_format(lfs_t *lfs, const struct lfs_config *cfg) {
     err = lfs_format_(lfs, cfg);
 
     LFS_TRACE("lfs_format -> %d", err);
-    //LFS_UNLOCK(cfg);
+    LFS_UNLOCK(cfg);
     return err;
 }
 #endif
 
 int lfs_mount(lfs_t *lfs, const struct lfs_config *cfg) {
-    CLOG_PRINT_INFO("---------------Flash here 3");
-    int err;// = LFS_LOCK(cfg);
-    // CLOG_PRINT_INFO("---------------Flash here 3.1");
-    // if (err) 
-    // {
-    //     CLOG_PRINT_INFO("---------------Flash here 3.2");
-    //     return err;
-    // }
+    int err = LFS_LOCK(cfg);
+    if (err) 
+    {
+        return err;
+    }
     LFS_TRACE("lfs_mount(%p, %p {.context=%p, "
                 ".read=%p, .prog=%p, .erase=%p, .sync=%p, "
                 ".read_size=%"PRIu32", .prog_size=%"PRIu32", "
@@ -6020,11 +6019,9 @@ int lfs_mount(lfs_t *lfs, const struct lfs_config *cfg) {
             cfg->block_cycles, cfg->cache_size, cfg->lookahead_size,
             cfg->read_buffer, cfg->prog_buffer, cfg->lookahead_buffer,
             cfg->name_max, cfg->file_max, cfg->attr_max);
- CLOG_PRINT_INFO("---------------Flash here 4");
     err = lfs_mount_(lfs, cfg);
- CLOG_PRINT_INFO("---------------Flash here 5");
     LFS_TRACE("lfs_mount -> %d", err);
-    //LFS_UNLOCK(cfg);
+    LFS_UNLOCK(cfg);
     return err;
 }
 
@@ -6158,7 +6155,8 @@ int lfs_file_open(lfs_t *lfs, lfs_file_t *file, const char *path, int flags) {
 
 int lfs_file_opencfg(lfs_t *lfs, lfs_file_t *file,
         const char *path, int flags,
-        const struct lfs_file_config *cfg) {
+        const struct lfs_file_config *cfg) 
+{
     int err = LFS_LOCK(lfs->cfg);
     if (err) {
         return err;
@@ -6227,7 +6225,8 @@ lfs_ssize_t lfs_file_read(lfs_t *lfs, lfs_file_t *file,
 
 #ifndef LFS_READONLY
 lfs_ssize_t lfs_file_write(lfs_t *lfs, lfs_file_t *file,
-        const void *buffer, lfs_size_t size) {
+        const void *buffer, lfs_size_t size) 
+{
     int err = LFS_LOCK(lfs->cfg);
     if (err) {
         return err;
